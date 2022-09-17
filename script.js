@@ -14,8 +14,10 @@ function createCountries(countries){
                             <p><span id="sp">Population: </span><span id="sp1">${country.population}</span></p>
                             <p><span id="sp">Country Code: </span><span id="sp1">${country.cioc}</span></p>
                             <p><span id="sp">Latitude and Longitude: </span><span id="sp1">${country.latlng[0]}</span><span id="sp"> and</span> <span id="sp1">${country.latlng[1]}</span></p>
+                            
                         </div>
-                        <a onclick="getingWeather()" class="btn btn-primary">Click for Weather</a>
+                        <a onclick="getingWeather('${country.capital}')" class="btn btn-primary">Click for Weather</a>
+                        <p><span id="sp" class="weather wearther-${country.capital}">Weather of ${country.capital}: </span><span class="result-weather-${country.capital}" id="sp1"></span></p>
                     </div>
                 </div>            
             </div>`;
@@ -24,16 +26,21 @@ function createCountries(countries){
 
 fetch("https://restcountries.com/v3.1/all")
     .then((data) => data.json())
-    .then((countries) => createCountries(countries))
+    .then((countries) => {createCountries(countries), console.log(countries);})
     .catch((errMsg) => console.log("An error occurred:", errMsg));
 
 
-function getingWeather(){
-var out = document.querySelector('.capital');
-console.log(out);
+function getingWeather(weather){
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${weather}&appid=5ffb2bf73007aff071ad4d176e997efd`)
+        .then((data1) => data1.json())
+        .then((capital) => {console.log(capital),result(capital)})
+        .catch((errMsg1) => console.log("An Error:",errMsg1));    
 }
 
-// fetch(`https://api.openweathermap.org/data/2.5/weather?q=${}&appid=5ffb2bf73007aff071ad4d176e997efd`)
-// .then((data1) => data1.json())
-// .then((weather) => console.log(weather))
-// .catch((errMsg1) => console.log("An Error:",errMsg1));
+function result(r){
+    document.querySelector(`.wearther-${r.name}`).style.display ="flex";
+    document.querySelector(`.result-weather-${r.name}`).innerText=`${r.weather[0].description}`;
+}
+
+// url =https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+// API KEy = 5ffb2bf73007aff071ad4d176e997efd
